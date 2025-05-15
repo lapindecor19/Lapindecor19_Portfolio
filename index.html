@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+  
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -7,7 +8,9 @@
   <link rel="stylesheet" href="Portfolio_style.css" />
 </head>
 <body>
-
+<div id="splash-screen">
+  <div class="slogan">DESIGNING YOUR LIFE</div>
+</div>
   <header class="main-header">
     <div class="brand">LAPINDECOR19</div>
     <nav class="main-nav">
@@ -18,6 +21,7 @@
       <a href="#">STUDIO</a>
       <a href="#">PRESS</a>
     </nav>
+    <div class="mobile-menu-button">☰</div>
     <div class="search-icon">🔍</div>
   </header>
 
@@ -45,7 +49,7 @@
     <!-- ตัวอย่างโปรเจกต์ -->
 <div class="project-card">
 <div class="img-container">
-<img alt="Project 1" src="avif_images/Clinic-S6.avif"/>
+<img alt="Project 1" src="avif_images/Clinic-S4.avif"/>
 <div class="overlay">
 <span class="view-text" data-images="Clinic-S1.avif, Clinic-S10.avif, Clinic-S11.avif, Clinic-S12.avif, Clinic-S2.avif, Clinic-S3.avif, Clinic-S4.avif, Clinic-S5.avif, Clinic-S6.avif, Clinic-S7.avif, Clinic-S8.avif, Clinic-S9.avif">VIEW</span>
 </div>
@@ -395,12 +399,11 @@ document.addEventListener('DOMContentLoaded', function () {
   function showGallery(images) {
     track.innerHTML = '';
 
-    const leftClone = document.createElement('div');
-    leftClone.className = 'lightbox-slide spacer';
+    const spacer = document.createElement('div');
+    spacer.className = 'lightbox-slide spacer';
 
-    const rightClone = leftClone.cloneNode();
-
-    track.appendChild(leftClone);
+    // ⬅️ spacer ด้านซ้าย
+    track.appendChild(spacer.cloneNode());
 
     images.forEach((src, i) => {
       const slide = document.createElement('div');
@@ -413,36 +416,38 @@ document.addEventListener('DOMContentLoaded', function () {
       track.appendChild(slide);
     });
 
-    track.appendChild(rightClone);
+    // ➡️ spacer ด้านขวา
+    track.appendChild(spacer.cloneNode());
 
     gallery.classList.add('active');
     currentIndex = 0;
     updateTransform();
   }
 
-  function updateTransform() {
-    const slides = track.querySelectorAll('.lightbox-slide');
-    if (!slides[currentIndex]) return;
+function updateTransform() {
+  const slides = track.querySelectorAll('.lightbox-slide');
+  if (!slides[currentIndex]) return;
 
-    slides.forEach((s, i) => {
-      s.classList.toggle('active', i === currentIndex);
-    });
+  const slide = slides[currentIndex];
+  const slideWidth = slide.offsetWidth;
+  const slideOffsetLeft = slide.offsetLeft;
+  const viewportWidth = document.querySelector('.lightbox-viewport').offsetWidth;
 
-    const slide = slides[currentIndex];
-    const slideWidth = slide.offsetWidth;
-    const slideOffsetLeft = slide.offsetLeft;
-    const containerWidth = gallery.offsetWidth;
-    const centerOffset = slideOffsetLeft - (containerWidth - slideWidth) / 2;
+  const centerOffset = slideOffsetLeft - (viewportWidth - slideWidth) / 2;
 
-    track.style.transition = 'transform 0.5s ease';
-    track.style.transform = `translateX(-${centerOffset}px)`;
-  }
+  track.style.transform = `translateX(-${centerOffset}px)`;
+
+  slides.forEach((s, i) => {
+    s.classList.toggle('active', i === currentIndex);
+  });
+}
 
   viewButtons.forEach(button => {
     button.addEventListener('click', function () {
       const data = this.getAttribute('data-images');
       if (!data) return;
-      const images = data.split(',').map(x => x.trim());
+
+      const images = data.split(',');
       if (images.length === 0) return;
 
       showGallery(images);
@@ -477,7 +482,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Touch swipe
+  // Touch swipe only
   let startX = 0;
 
   track.addEventListener('touchstart', (e) => {
@@ -498,19 +503,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // คลิกที่ภาพเพื่อเลื่อนไปตรงกลาง
+  // Click image to center that image
   track.addEventListener('click', (e) => {
-    const clicked = e.target.closest('.lightbox-slide');
-    if (!clicked) return;
-    const slides = Array.from(track.children);
-    const index = slides.indexOf(clicked);
-    if (index >= 0) {
+    const clickedSlide = e.target.closest('.lightbox-slide');
+    if (!clickedSlide) return;
+
+    const slides = [...track.children];
+    const index = slides.indexOf(clickedSlide);
+    if (index !== -1) {
       currentIndex = index;
       updateTransform();
     }
   });
 
-  // Scroll Hijack
+  // Scroll hijack vertical to horizontal
   gallery.addEventListener('wheel', e => {
     if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
       e.preventDefault();
@@ -524,6 +530,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }, { passive: false });
 });
+
 </script>
 
 
@@ -568,5 +575,13 @@ document.addEventListener('DOMContentLoaded', function () {
     </div>
   </div>
 </div>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const splash = document.getElementById('splash-screen');
+    if (splash) splash.remove();
+  }, 6000); // ✅ ลบออกหลังทุกอย่างจบ
+});
+</script>
 </body>
 </html>

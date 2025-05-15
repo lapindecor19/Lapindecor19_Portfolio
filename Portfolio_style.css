@@ -1,3 +1,48 @@
+#splash-screen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background-color: rgba(243, 240, 233, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  pointer-events: none;
+  animation: fadeOutSplash 2s ease forwards;
+  animation-delay: 4s;
+}
+
+#splash-screen .slogan {
+  font-size: 24px;
+  color: #9C7564;
+  letter-spacing: 0px;
+  opacity: 1;
+  font-weight: 500;
+  animation: expandText 3.5s ease forwards;
+}
+
+/* เนียนขึ้น */
+@keyframes expandText {
+  0% {
+    letter-spacing: 0px;
+    opacity: 1;
+  }
+  100% {
+    letter-spacing: 1em;
+    opacity: 0;
+  }
+}
+
+@keyframes fadeOutSplash {
+  0% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
 body {
   margin: 0;
   background-color: #f3f0e9;
@@ -133,12 +178,11 @@ body {
 
 .project-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 🔒 ล็อก 3 คอลัมน์ */
+  grid-template-columns: repeat(3, 1fr);
   gap: 40px;
-  width: 1200px;       /* 🔒 คงขนาดไม่ให้ responsive */
-  margin: 0 auto;      /* 🧲 จัดให้อยู่กลาง */
-  padding: 40px 0;
-  min-width: 1200px;   /* 👈 ป้องกันกริดย่อเล็กบนมือถือ */
+  padding: 80px;
+  background-color: #f3f0e9;
+  margin-top: 100px;
 }
 
 .project-card.span-2 {
@@ -153,7 +197,7 @@ body {
   overflow: hidden;
   background-color: #fff;
   /* ความสูงรูป Hero นะจ๊ะ */
-  height: 20vh;
+  height: 650px;
   display: flex;
   flex-direction: column;
 }
@@ -166,7 +210,7 @@ body {
 }
 .img-container img {
   width: 100%;
-  height: 260px;
+  height: 100%;
   object-fit: cover;
   display: block;
   transition: transform 0.5 ease;
@@ -275,6 +319,7 @@ body {
   }
 }
 
+
 /* footer */
 .site-footer {
   background-color: #f3f0e9;
@@ -364,18 +409,18 @@ body {
 
 .lightbox-gallery {
   position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.9);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
   z-index: 9999;
-  visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   opacity: 0;
+  visibility: hidden;
   transition: opacity 0.3s ease;
-  overflow: hidden;
+  overflow: visible
 }
-
 .lightbox-slide.spacer {
   width: calc(50vw - 10vw); /* = ครึ่งจอ - ครึ่งของภาพ (ภาพกว้าง 20vw) */
   height: 1px;               /* ไม่ต้องให้สูง */
@@ -383,8 +428,8 @@ body {
 }
 
 .lightbox-gallery.active {
-  visibility: visible;
   opacity: 1;
+  visibility: visible;
 }
 
 .lightbox-viewport {
@@ -394,30 +439,121 @@ body {
 
 .lightbox-track {
   display: flex;
-  transition: transform 0.5s ease;
-  gap: 20px;
+  gap: 140px;
+  transition: transform 0.9s ease;
   will-change: transform;
 }
 
 .lightbox-slide {
   flex-shrink: 0;
-  width: 60vw;
-  height: 80vh;
+  width: 30vw;
+
+  min-height: 80vh;           /* ✅ ป้องกันสูงเกินจอ */
+  
   display: flex;
   align-items: center;
   justify-content: center;
+
+  scroll-snap-align: center;
+  overflow: visible;
+  position: relative;
 }
 
 .lightbox-slide img {
-  max-width: 100%;
-  max-height: 100%;
+  height: auto;               /* ✅ ให้สูงอิสระ */
+  max-height: 60vh;           /* ✅ คุมไม่ให้สูงเกินจอ */
+  max-width: 100%;            /* ✅ ปรับตาม container */
   object-fit: contain;
-  opacity: 0.5;
-  transition: transform 0.5s ease, opacity 0.5s ease;
-  cursor: pointer;
+  transform-origin: center center;
+
+  opacity: 0.2;
+  transition: opacity 0.7s ease, transform 0.7s ease;
 }
 
 .lightbox-slide.active img {
   opacity: 1;
   transform: scale(1.2);
+}
+
+.project-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding: 20px;
+  background-color: #f3f0e9;
+  margin-top: 100px;
+}
+
+/* ✅ คอลัมน์ปกติ: 3 ช่อง */
+.project-card {
+  flex: 1 1 calc((100% - 60px) / 3); /* 3 คอลัมน์ + ช่องไฟ */
+  box-sizing: border-box;
+}
+
+/* ✅ span-2 = 2 ช่อง, span-3 = เต็มแถว */
+.project-card.span-2 {
+  flex: 1 1 calc((100% - 60px) * 2 / 3 + 30px);
+}
+.project-card.span-3 {
+  flex: 1 1 100%;
+}
+
+/* ✅ ในมือถือ: ทำให้ .project-card ขยายช่องว่างด้านข้างเอง */
+@media (max-width: 768px) {
+  .project-grid {
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .project-card {
+    flex: 1 1 100%; /* ให้มันขยายเต็มแถวถ้าไม่มีเพื่อน */
+    max-width: 100%;
+  }
+
+  .project-card.span-2 {
+    flex: 1 1 100%;
+  }
+
+  .project-card.span-3 {
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .lightbox-slide {
+    width: 60vw; /* ใหญ่พอดี ไม่เกินจอ */
+  }
+
+  .lightbox-slide img {
+    max-height: 75vh; /* ให้สูงขึ้นกว่าเดิม */
+    opacity: 0.4; /* เพื่อให้ภาพอื่นจาง ๆ */
+  }
+
+  .lightbox-slide.active img {
+    transform: scale(1.2); /* ขยายภาพกลางเฉพาะในมือถือ */
+    opacity: 1;
+  }
+
+  .lightbox-track {
+    gap: 10px; /* ลดระยะห่าง ให้เห็นภาพข้าง ๆ */
+  }
+}
+
+@media (max-width: 768px) {
+  .main-nav {
+    display: none;
+  }
+
+  .mobile-menu-button {
+    display: block;
+    font-size: 20px;
+    cursor: pointer;
+  }
+}
+
+/* เดสก์ท็อป: ซ่อนปุ่มมือถือ */
+.mobile-menu-button {
+  display: none;
+  color: white;
 }

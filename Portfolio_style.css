@@ -1,42 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
 #splash-screen {
   position: fixed;
   top: 0; left: 0;
   width: 100vw; height: 100vh;
   background-color: rgba(243, 240, 233, 0.95);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 9999;
   pointer-events: none;
   animation: fadeOutSplash 2s ease forwards;
-  animation-delay: 4s;
+  animation-delay: 5s;
+  gap: 14px; /* ✅ เพิ่มช่องว่างระหว่างบรรทัดให้ดูโปร่ง */
 }
 
-#splash-screen .slogan {
-  font-size: 24px;
+.slogan-line {
   color: #9C7564;
-  letter-spacing: 0px;
-  opacity: 1;
+  font-size: 24px;
   font-weight: 500;
-  animation: expandText 3.5s ease forwards;
+  opacity: 0;
+  letter-spacing: 0em;
+  transform: translateY(20px);
+  animation: fadeInRise 1.5s ease forwards;
 }
 
-/* เนียนขึ้น */
-@keyframes expandText {
-  0% {
-    letter-spacing: 0px;
+.slogan-line:nth-child(1) {
+  animation-delay: 0.3s;
+}
+.slogan-line:nth-child(2) {
+  animation-delay: 1s;
+}
+.slogan-line:nth-child(3) {
+  animation-delay: 1.7s;
+}
+
+.slogan-line.fancy {
+  font-family: 'Great Vibes', cursive;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+/* ✨ ขึ้นมาแต่ละบรรทัด */
+@keyframes fadeInRise {
+  from {
+    opacity: 0;
+  }
+  to {
     opacity: 1;
   }
+}
+
+/* ✨ ออกพร้อมกันทั้งหมด */
+.slogan-line {
+  animation-fill-mode: forwards;
+  animation-timing-function: ease;
+  animation-duration: 1.5s;
+}
+
+/* แยกตัวอักษร + fade out */
+#splash-screen .slogan-line {
+  animation-name: fadeInRise;
+}
+
+#splash-screen.fade-out .slogan-line {
+  animation: separateFade 2s ease forwards !important;
+}
+
+@keyframes separateFade {
+  0% {
+    opacity: 1;
+    letter-spacing: 0em;
+  }
   100% {
-    letter-spacing: 1em;
     opacity: 0;
+    letter-spacing: 1em;
   }
 }
 
 @keyframes fadeOutSplash {
-  0% {
-    opacity: 0.95;
-  }
+  0% { opacity: 1; }
   100% {
     opacity: 0;
     visibility: hidden;

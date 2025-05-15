@@ -8,8 +8,11 @@
   <link rel="stylesheet" href="Portfolio_style.css" />
 </head>
 <body>
+<!-- Slogan Splash -->
 <div id="splash-screen">
-  <div class="slogan">DESIGNING YOUR LIFE</div>
+  <div class="slogan-line">DESIGN YOUR LIFE</div>
+  <div class="slogan-line fancy">Through</div>
+  <div class="slogan-line">THE WAY YOU LIVE</div>
 </div>
   <header class="main-header">
     <div class="brand">LAPINDECOR19</div>
@@ -577,10 +580,15 @@ function updateTransform() {
 </div>
 <script>
 window.addEventListener('DOMContentLoaded', () => {
+  // รอให้ข้อความขึ้นครบ แล้วเริ่มแยก+เฟดออก
   setTimeout(() => {
-    const splash = document.getElementById('splash-screen');
-    if (splash) splash.remove();
-  }, 6000); // ✅ ลบออกหลังทุกอย่างจบ
+    document.getElementById('splash-screen')?.classList.add('fade-out');
+  }, 4000);
+
+  // ลบ splash ออกจาก DOM ทีหลัง
+  setTimeout(() => {
+    document.getElementById('splash-screen')?.remove();
+  }, 6500);
 });
 </script>
 </body>

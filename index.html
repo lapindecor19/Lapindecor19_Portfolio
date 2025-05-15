@@ -454,18 +454,21 @@ function updateTransform() {
       if (images.length === 0) return;
 
       showGallery(images);
+      disableScroll();
     });
   });
 
   closeBtn.addEventListener('click', () => {
     gallery.classList.remove('active');
     track.innerHTML = '';
+    enableScroll();
   });
 
   gallery.addEventListener('click', e => {
     if (e.target === gallery) {
       gallery.classList.remove('active');
       track.innerHTML = '';
+      enableScroll();
     }
   });
 
@@ -533,6 +536,13 @@ function updateTransform() {
     }
   }, { passive: false });
 });
+function disableScroll() {
+  document.body.style.overflow = 'hidden';
+}
+
+function enableScroll() {
+  document.body.style.overflow = '';
+}
 
 </script>
 
@@ -580,6 +590,7 @@ function updateTransform() {
 </div>
 <script>
 window.addEventListener('DOMContentLoaded', () => {
+    disableScroll(); // ห้าม scroll ตั้งแต่โหลด
   // รอให้ข้อความขึ้นครบ แล้วเริ่มแยก+เฟดออก
   setTimeout(() => {
     document.getElementById('splash-screen')?.classList.add('fade-out');
@@ -588,6 +599,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // ลบ splash ออกจาก DOM ทีหลัง
   setTimeout(() => {
     document.getElementById('splash-screen')?.remove();
+    enableScroll(); // เปิด scroll หลัง splash หาย
   }, 6500);
 });
 </script>

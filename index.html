@@ -5,76 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LAPINDECOR19 Portfolio</title>
   <link rel="stylesheet" href="Portfolio_style.css" />
-  <style>
-/* เพื่อปิด scroll bar จริง ๆ ทั่ว browser */
-.lightbox-gallery {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0, 0, 0, 0.9);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease;
-  overflow: visible
-}
-.lightbox-slide.spacer {
-  width: calc(50vw - 10vw); /* = ครึ่งจอ - ครึ่งของภาพ (ภาพกว้าง 20vw) */
-  height: 1px;               /* ไม่ต้องให้สูง */
-  pointer-events: none;
-}
-
-.lightbox-gallery.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-.lightbox-viewport {
-  width: 100%;
-  overflow: hidden;
-}
-
-.lightbox-track {
-  display: flex;
-  gap: 140px;
-  transition: transform 0.9s ease;
-  will-change: transform;
-}
-
-.lightbox-slide {
-  flex-shrink: 0;
-  width: 30vw;
-
-  min-height: 80vh;           /* ✅ ป้องกันสูงเกินจอ */
-  
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  scroll-snap-align: center;
-  overflow: visible;
-  position: relative;
-}
-
-.lightbox-slide img {
-  height: auto;               /* ✅ ให้สูงอิสระ */
-  max-height: 60vh;           /* ✅ คุมไม่ให้สูงเกินจอ */
-  max-width: 100%;            /* ✅ ปรับตาม container */
-  object-fit: contain;
-  transform-origin: center center;
-
-  opacity: 0.2;
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-
-.lightbox-slide.active img {
-  opacity: 1;
-  transform: scale(1.2);
-}
-  </style>
 </head>
 <body>
 
@@ -465,11 +395,12 @@ document.addEventListener('DOMContentLoaded', function () {
   function showGallery(images) {
     track.innerHTML = '';
 
-    const spacer = document.createElement('div');
-    spacer.className = 'lightbox-slide spacer';
+    const leftClone = document.createElement('div');
+    leftClone.className = 'lightbox-slide spacer';
 
-    // ⬅️ spacer ด้านซ้าย
-    track.appendChild(spacer.cloneNode());
+    const rightClone = leftClone.cloneNode();
+
+    track.appendChild(leftClone);
 
     images.forEach((src, i) => {
       const slide = document.createElement('div');
@@ -482,38 +413,36 @@ document.addEventListener('DOMContentLoaded', function () {
       track.appendChild(slide);
     });
 
-    // ➡️ spacer ด้านขวา
-    track.appendChild(spacer.cloneNode());
+    track.appendChild(rightClone);
 
     gallery.classList.add('active');
     currentIndex = 0;
     updateTransform();
   }
 
-function updateTransform() {
-  const slides = track.querySelectorAll('.lightbox-slide');
-  if (!slides[currentIndex]) return;
+  function updateTransform() {
+    const slides = track.querySelectorAll('.lightbox-slide');
+    if (!slides[currentIndex]) return;
 
-  const slide = slides[currentIndex];
-  const slideWidth = slide.offsetWidth;
-  const slideOffsetLeft = slide.offsetLeft;
-  const viewportWidth = document.querySelector('.lightbox-viewport').offsetWidth;
+    slides.forEach((s, i) => {
+      s.classList.toggle('active', i === currentIndex);
+    });
 
-  const centerOffset = slideOffsetLeft - (viewportWidth - slideWidth) / 2;
+    const slide = slides[currentIndex];
+    const slideWidth = slide.offsetWidth;
+    const slideOffsetLeft = slide.offsetLeft;
+    const containerWidth = gallery.offsetWidth;
+    const centerOffset = slideOffsetLeft - (containerWidth - slideWidth) / 2;
 
-  track.style.transform = `translateX(-${centerOffset}px)`;
-
-  slides.forEach((s, i) => {
-    s.classList.toggle('active', i === currentIndex);
-  });
-}
+    track.style.transition = 'transform 0.5s ease';
+    track.style.transform = `translateX(-${centerOffset}px)`;
+  }
 
   viewButtons.forEach(button => {
     button.addEventListener('click', function () {
       const data = this.getAttribute('data-images');
       if (!data) return;
-
-      const images = data.split(',');
+      const images = data.split(',').map(x => x.trim());
       if (images.length === 0) return;
 
       showGallery(images);
@@ -548,7 +477,7 @@ function updateTransform() {
     }
   });
 
-  // Touch swipe only
+  // Touch swipe
   let startX = 0;
 
   track.addEventListener('touchstart', (e) => {
@@ -569,20 +498,19 @@ function updateTransform() {
     }
   });
 
-  // Click image to center that image
+  // คลิกที่ภาพเพื่อเลื่อนไปตรงกลาง
   track.addEventListener('click', (e) => {
-    const clickedSlide = e.target.closest('.lightbox-slide');
-    if (!clickedSlide) return;
-
-    const slides = [...track.children];
-    const index = slides.indexOf(clickedSlide);
-    if (index !== -1) {
+    const clicked = e.target.closest('.lightbox-slide');
+    if (!clicked) return;
+    const slides = Array.from(track.children);
+    const index = slides.indexOf(clicked);
+    if (index >= 0) {
       currentIndex = index;
       updateTransform();
     }
   });
 
-  // Scroll hijack vertical to horizontal
+  // Scroll Hijack
   gallery.addEventListener('wheel', e => {
     if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
       e.preventDefault();
@@ -596,7 +524,6 @@ function updateTransform() {
     }
   }, { passive: false });
 });
-
 </script>
 
 
